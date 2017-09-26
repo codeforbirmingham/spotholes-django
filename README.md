@@ -24,6 +24,8 @@ PATCH: {username: username, email:email, password:password}
 
 Update username, email, or password or all. Only account owner or moderator has these permissions.
 
+## Pothole Endpoints
+
 ### /api/v1/potholes/
 
 GET:

@@ -1,4 +1,4 @@
-#Spotholes
+# Spotholes
 
 Spotholes is a pothole tracking app, designed to allow city dwellers to more efficiently locate potholes.
 

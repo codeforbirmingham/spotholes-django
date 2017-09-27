@@ -24,6 +24,18 @@ PATCH: {username: username, email:email, password:password}
 
 Update username, email, or password or all. Only account owner or moderator has these permissions.
 
+### /api/v1/accounts/username/status
+
+POST: {is_staff: (true/false), is_active:(true/false)}
+
+Update a users permissions and active status. Only moderator has these permissions.
+
+### /api/v1/accounts/username/potholes/
+
+GET: 
+
+Return a list of this user's potholes
+
 ## Pothole Endpoints
 
 ### /api/v1/potholes/

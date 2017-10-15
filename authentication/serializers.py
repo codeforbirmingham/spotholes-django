@@ -36,7 +36,7 @@ class AccountSerializer(serializers.ModelSerializer):
         
         instance.username = validated_data.get('username', instance.username)
         instance.email = validated_data.get('email', instance.email)
-        instance.is_staff = validated_data.get('is_active', instance.is_staff)
+        instance.is_staff = validated_data.get('is_staff', instance.is_staff)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
         

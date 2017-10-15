@@ -9,6 +9,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate, login
 from spotholes.mixins import PaginationMixin
 from rest_framework.settings import api_settings
+from authentication.tasks import subscribe
 
 # Create your views here.
 
@@ -107,6 +108,7 @@ class AccountStatusView(APIView):
         
             serializer.save()
             
+            subscribe(username)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

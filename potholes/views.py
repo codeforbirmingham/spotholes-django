@@ -228,7 +228,7 @@ class PotholeReportView(PaginationMixin, APIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         
 
-class PoteholeReportDetailView(APIView):
+class PotholeReportDetailView(APIView):
     
     def get_object(self, r_pk):
         try:

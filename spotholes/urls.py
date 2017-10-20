@@ -17,13 +17,15 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from potholes.views import ListPotholeView, PotholeDetailView, PotholeVoteView, PotholeByUserListView, PotholeReportView, PotholeReportDetailView
-from authentication.views import AccountListView, AccountDetailView, AccountStatusView, SignInView
+from authentication.views import AccountListView, AccountDetailView, AccountStatusView, SignInView, PasswordResetRequestView, PasswordResetConfirmView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/auth/signin', SignInView.as_view()),
     url(r'^api/v1/accounts/$', AccountListView.as_view(), name = 'account-list'),
     url(r'^api/v1/accounts/(?P<username>\w+)/$', AccountDetailView.as_view(), name = 'account-detail'),
+    url(r'api/v1/accounts/reset-password/$', PasswordResetRequestView.as_view(), name='reset-request'),
+    url(r'api/v1/accounts/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', PasswordResetConfirmView.as_view(), name = 'confirm-reset'),
     url(r'^api/v1/accounts/(?P<username>\w+)/status/$', AccountStatusView.as_view(), name = 'account-status'),
     url(r'^api/v1/accounts/(?P<username>\w+)/potholes/$', PotholeByUserListView.as_view(), name = 'pothole-account-list'),
     url(r'^api/v1/potholes/$', ListPotholeView.as_view(), name = 'pothole-list'),
@@ -32,4 +34,9 @@ urlpatterns = [
     url(r'^api/v1/potholes/(?P<pk>[0-9]+)/reports/$', PotholeReportView.as_view(), name = 'report-list'),
     url(r'^api/v1/potholes/(?P<p_pk>[0-9]+)/reports/(?P<r_pk>[0-9]+)/$', PotholeReportDetailView.as_view(), name = 'report-detail')
     
+]
+
+urlpatterns += [
+    url(r'^api-auth/', include('rest_framework.urls',
+                               namespace='rest_framework')),
 ]

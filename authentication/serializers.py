@@ -54,8 +54,39 @@ class AccountSerializer(serializers.ModelSerializer):
         
         
     
+class EmailSerializer(serializers.Serializer):
+    
+    
+    email = serializers.EmailField()
+    
+
+class PasswordResetSerializer(serializers.ModelSerializer):
+    
+    confirm_password = serializers.CharField(write_only = True)
+    password = serializers.CharField(write_only = True)
+    
+    def validate(self, data):
         
+        if data["confirm_password"] != data["password"]:
+            
+            raise serializers.ValidationError("Password and Confirm Password must match")
+            
+        return super(PasswordResetSerializer, self).validate(data)
+    
+    def update(self, instance, validated_data):
         
+        password = validated_data.get('password', False)
+        confirm_password = validated_data.get('confirm_password', False)
+        
+        instance.set_password(password)
+        instance.save()
+        
+        return instance
+    
+    class Meta:
+        
+        model = Account
+        fields = ('confirm_password', 'password',)
         
     
     

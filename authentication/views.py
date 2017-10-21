@@ -1,15 +1,18 @@
-from django.shortcuts import render
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.http import Http404
+from django.contrib.auth.tokens import default_token_generator
 from authentication.models import Account
-from authentication.serializers import AccountSerializer
+from authentication.serializers import AccountSerializer, EmailSerializer, PasswordResetSerializer
 from authentication.permissions import IsUserOrModeratorOrReadOnly, IsModerator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from spotholes.mixins import PaginationMixin
 from rest_framework.settings import api_settings
 from authentication.tasks import subscribe
+
+
 
 # Create your views here.
 
@@ -133,4 +136,97 @@ class SignInView(APIView):
             
         
         return Response({"detail": "No user with those credentials exists"}, status = status.HTTP_403_FORBIDDEN)
+        
+class SignOutView(APIView):
+    
+    def get(self, request):
+        
+        logout(request)
+        
+        return Response({"message":"See you next time"}, status = status.HTTP_302_FOUND)
+        
+
+class PasswordResetRequestView(APIView):
+    
+    def get_object(self, email):
+        
+        try:
+            obj = Account.objects.get(email = email)
+
+            return obj
+        
+        except Account.DoesNotExist:
+            
+            return None
+    
+    def post(self, request, format = None):
+        
+        serializer = EmailSerializer(data = request.data)
+        
+        if serializer.is_valid():
+            
+            email = request.data.get('email', None)
+            user = self.get_object(email)
+            
+            if user is not None:
+                
+                token = default_token_generator.make_token(user)
+                print token
+            
+            return Response({"message":"An email has been sent with the appropriate instructions"})
+            
+        
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        
+        
+
+class PasswordResetConfirmView(APIView):
+    
+    def get_object(self, uib64):
+        
+        try:
+            obj = Account.objects.get(pk = uib64)
+            
+        
+        except Account.DoesNotExist:
+            
+            obj = None
+        
+        return obj
+        
+    
+    def patch(self, request, uidb64, token, format = None):
+        
+        
+        uidb64 = urlsafe_base64_decode(uidb64)
+        user = self.get_object(uidb64)
+        
+        if user is not None:
+            
+            if default_token_generator.check_token(user, token):
+                
+                
+                serializer = PasswordResetSerializer(user, data = request.data)
+                
+                if serializer.is_valid():
+                    
+                    serializer.save()
+                    
+                    return Response({"message":"You may now login with your updated credentials."}, status = status.HTTP_202_ACCEPTED)
+                    
+                return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message":"Their was a problem with your request"}, status = status.HTTP_400_BAD_REQUEST)
+        
+        
+
+
+    
+            
+            
+        
+        
+        
+        
+        
         

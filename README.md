@@ -24,11 +24,24 @@ PATCH: {username: username, email:email, password:password}
 
 Update username, email, or password or all. Only account owner or moderator has these permissions.
 
-### /api/v1/accounts/username/status
+### /api/v1/accounts/username/status/
 
 POST: {is_staff: (true/false), is_active:(true/false)}
 
 Update a users permissions and active status. Only moderator has these permissions.
+
+### /api/v1/accounts/reset-password/
+
+POST: {email: email}
+
+Request an email with instructions to update password.
+
+### /api/v1/accounts/reset/uib64/token/
+
+POST: {password:password, confirm_password:password}
+
+Update password when forgotten.
+
 
 ### /api/v1/accounts/username/potholes/
 
@@ -90,6 +103,16 @@ POST:
 
 {comment:comment (<= 4000 chars)}
 Create a report.
+
+### /api/v1/potholes/id/reports/id/
+
+GET:
+
+Get a specific report
+
+PATCH:
+
+Update a report
 
 
 

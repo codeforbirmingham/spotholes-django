@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from potholes.views import ListPotholeView, PotholeDetailView, PotholeVoteView, PotholeByUserListView, PotholeReportView, PotholeReportDetailView
+from potholes.views import ListPotholeView, PotholeDetailView, PotholeDownVoteView, PotholeUpVoteView, PotholeByUserListView, PotholeReportView, PotholeReportDetailView
 from authentication.views import AccountListView, AccountDetailView, AccountStatusView, SignInView, PasswordResetRequestView, PasswordResetConfirmView
 
 urlpatterns = [
@@ -30,7 +30,8 @@ urlpatterns = [
     url(r'^api/v1/accounts/(?P<username>\w+)/potholes/$', PotholeByUserListView.as_view(), name = 'pothole-account-list'),
     url(r'^api/v1/potholes/$', ListPotholeView.as_view(), name = 'pothole-list'),
     url(r'^api/v1/potholes/(?P<pk>[0-9]+)/$', PotholeDetailView.as_view(), name = 'pothole-detail'),
-    url(r'^api/v1/potholes/(?P<pk>[0-9]+)/votes/$', PotholeVoteView.as_view(), name = 'vote-list'),
+    url(r'^api/v1/potholes/(?P<pk>[0-9]+)/up_vote/$', PotholeUpVoteView.as_view(), name = 'up_votes'),
+    url(r'^api/v1/potholes/(?P<pk>[0-9]+)/down_vote/$', PotholeDownVoteView.as_view(), name = 'up_votes'),
     url(r'^api/v1/potholes/(?P<pk>[0-9]+)/reports/$', PotholeReportView.as_view(), name = 'report-list'),
     url(r'^api/v1/potholes/(?P<p_pk>[0-9]+)/reports/(?P<r_pk>[0-9]+)/$', PotholeReportDetailView.as_view(), name = 'report-detail')
     

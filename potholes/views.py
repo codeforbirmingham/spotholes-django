@@ -1,15 +1,15 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from potholes.serializers import PotholeSerializer, ReportSerializer, VoteSerializer
-from potholes.models import Pothole, Report, Vote
-from potholes.tasks import send_report
+from potholes.serializers import PotholeSerializer, ReportSerializer
+from potholes.models import Pothole, Report, Action
 from authentication.models import Account
 from rest_framework import status, permissions
 from potholes.permissions import IsModeratorOwnerOrReadOnly
 from django.http import Http404
 from rest_framework.settings import api_settings
 from spotholes.mixins import PaginationMixin
+
 
 
 # Create your views here.
@@ -133,7 +133,7 @@ class PotholeByUserListView(APIView):
         return Response(serializer.data, status = status.HTTP_200_OK)
         
 
-class PotholeVoteView(APIView):
+class PotholeUpVoteView(APIView):
     
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     
@@ -152,29 +152,66 @@ class PotholeVoteView(APIView):
     
     def get(self, request, pk, format = None):
         
-        obj = self.get_object(pk)
-        serializer =  VoteSerializer(obj.vote_set.all(), many = True)
-        
-        return Response(serializer.data, status = status.HTTP_200_OK)
+        pothole = self.get_object(pk)
+        count = pothole.up_votes.count()
+        return Response({"up_votes": count}, status = status.HTTP_200_OK)
         
    
     def post(self, request, pk, format = None):
         
-        obj = self.get_object(pk)
+        pothole = self.get_object(pk)
         
-        if obj.vote_set.filter(user = request.user).exists():
+        if pothole.up_votes.filter(user = request.user).exists():
             
-            vote = obj.vote_set.get(user = request.user)
-            vote.rating = request.data.get("rating", 1)
-            vote.save()
             
-        else:
+            return Response({"message":"Already up voted"}, status = status.HTTP_202_ACCEPTED)
+        
+        pothole.up_votes.create(user = request.user, action = 'u')
+        
+        return Response({"message":"Vote recieved"})
             
-            vote = obj.vote_set.create(user = request.user, rating = request.data.get("rating", 1))
         
         return Response({"message":"Vote recieved"}, status = status.HTTP_202_ACCEPTED)
         
+class PotholeDownVoteView(APIView):
+    
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    
+    def get_object(self, pk):
         
+        try:
+            obj = Pothole.objects.get(id = pk)
+            self.check_object_permissions(self.request, obj)
+        
+            return obj
+            
+        except Pothole.DoesNotExist:
+            
+            raise Http404
+            
+    
+    def get(self, request, pk, format = None):
+        
+        pothole = self.get_object(pk)
+        count = pothole.down_votes.count()
+        
+        return Response({"down_votes":count}, status = status.HTTP_200_OK)
+        
+   
+    def post(self, request, pk, format = None):
+        
+        pothole = self.get_object(pk)
+        
+        if pothole.up_votes.filter(user = request.user).exists():
+            
+            
+            return Response({"message":"Already down voted"}, status = status.HTTP_202_ACCEPTED)
+        
+        pothole.up_votes.create(user = request.user, action = 'd')
+            
+        
+        return Response({"message":"Vote recieved"}, status = status.HTTP_202_ACCEPTED)
+             
 
 class PotholeReportView(PaginationMixin, APIView):
     
@@ -222,7 +259,7 @@ class PotholeReportView(PaginationMixin, APIView):
             serializer.save(user = request.user, pothole = pothole)
             
             report = self.get_report(serializer.data.get('id'))
-            send_report(pothole, report)
+            
             return Response(serializer.data, status = status.HTTP_201_CREATED)
             
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

@@ -6,7 +6,7 @@ from authentication.serializers import AccountSerializer, EmailSerializer, Passw
 from authentication.permissions import IsUserOrModeratorOrReadOnly, IsModerator
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 from django.contrib.auth import authenticate, login, logout
 from spotholes.mixins import PaginationMixin
 from rest_framework.settings import api_settings
@@ -217,15 +217,4 @@ class PasswordResetConfirmView(APIView):
         
         return Response({"message":"Their was a problem with your request"}, status = status.HTTP_400_BAD_REQUEST)
         
-        
-
-
     
-            
-            
-        
-        
-        
-        
-        
-        

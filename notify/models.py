@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from rest_framework.reverse import reverse
 
 # Create your models here.
 
@@ -31,15 +32,8 @@ class Action(models.Model):
         
         
         return self.action
-
-
-class Notification(models.Model):
-    
-    user = models.ForeignKey('authentication.Account')
-    message = models.CharField(max_length = 225)
-    created_at = models.DateTimeField(auto_now_add = True)
-    
-    
-    def __unicode__(self):
         
-        return self.message
+    class Meta:
+        
+        unique_together = (('user', 'action', 'content_type', 'object_id',), )
+

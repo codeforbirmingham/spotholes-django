@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['django_secret_key']
+SECRET_KEY = '(a9_qwbc&lo)3xo=m@+*%^2y3vc-civc9r3*)xt^ioj^o2op58'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'generic_relations',
     'imagekit',
     'authentication',
-    'potholes'
+    'potholes',
+    'notify'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -130,8 +132,8 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-AWS_ACCESS_KEY_ID = os.environ['aws_access_key']
-AWS_SECRET_ACCESS_KEY = os.environ['aws_secret_key']
+AWS_ACCESS_KEY_ID = 'AKIAJLSNHHHMY2JKIE4Q'
+AWS_SECRET_ACCESS_KEY = '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'
 
 
 REST_FRAMEWORK = {

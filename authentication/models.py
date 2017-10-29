@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 from django.db import models
+from rest_framework.reverse import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.contenttypes.fields import GenericRelation
+from notify.models import Action
 # Create your models here.
 
 class AccountManager(BaseUserManager):
@@ -40,7 +43,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+    up_votes = GenericRelation(Action)
+    down_votes = GenericRelation(Action)
     score = models.IntegerField(default = 0, blank = True)
     
 
@@ -60,6 +64,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         
         return self.first_name
+        
+    def get_absolute_url(self):
+        
+        return reverse('account-detail', args = [self.username])
         
         
         

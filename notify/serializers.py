@@ -1,31 +1,37 @@
 from rest_framework import serializers
-from potholes.models import Pothole, Report
 from potholes.serializers import PotholeSerializer, ReportSerializer
 from authentication.serializers import AccountSerializer
 from authentication.models import Account
-from notify.models import Action, Notification
+from potholes.models import Pothole
+from notify.models import Action
+from generic_relations.relations import GenericRelatedField
 
-class RelatedFieldSerializer(serializers.RelatedField):
-    
-    def to_representation(self, value):
 
-        if isinstance(value, Pothole):
-            serializer = PotholeSerializer(value)
-        elif isinstance(value, Account):
-            serializer = AccountSerializer(value)
-        else:
-            raise Exception('Unexpected object')
-
-        return serializer.data
         
 class ActionSerializer(serializers.ModelSerializer):
     
-    content_object = RelatedFieldSerializer(read_only = True)
+
+        
+    content_object = GenericRelatedField({
+        Account: serializers.HyperlinkedRelatedField(
+            view_name = 'account-detail',
+            queryset = Account.objects.all(),
+            lookup_field = 'username'
+            
+        ),
+        Pothole: serializers.HyperlinkedRelatedField(
+            view_name = 'pothole-detail',
+            queryset = Pothole.objects.all(),
+            lookup_field = 'pk'
+        )}, 
+        read_only = False
+    )
+    
     
     class Meta:
         
         model = Action
         fields = '__all__'
-        read_only_fields = ['content_object']
+        
         
     

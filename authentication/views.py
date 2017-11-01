@@ -1,4 +1,5 @@
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 from django.http import Http404
 from django.contrib.auth.tokens import default_token_generator
 from authentication.models import Account
@@ -10,6 +11,10 @@ from rest_framework import status, permissions
 from django.contrib.auth import authenticate, login, logout
 from spotholes.mixins import PaginationMixin
 from rest_framework.settings import api_settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
+
 
 
 
@@ -103,7 +108,6 @@ class AccountStatusView(APIView):
     def patch(self, request, username):
         
         obj = self.get_object(username)
-        print(request.data)
         serializer = AccountSerializer(obj, data = request.data, partial = True)
     
         if serializer.is_valid():
@@ -170,7 +174,13 @@ class PasswordResetRequestView(APIView):
             if user is not None:
                 
                 token = default_token_generator.make_token(user)
-                print token
+                uib64 = urlsafe_base64_encode(force_bytes((user.pk)))
+                link = user.get_reset_url(uib64, token)
+                context = {"link":link}
+                message = render_to_string('authentication/reset_email.html', context = context)
+                send_mail('Reset Your Password', message, settings.EMAIL_HOST_USER, [user.email])
+                
+                
             
             return Response({"message":"An email has been sent with the appropriate instructions"})
             

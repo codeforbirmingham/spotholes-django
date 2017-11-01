@@ -63,7 +63,7 @@ ROOT_URLCONF = 'spotholes.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -140,5 +140,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':  'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20
 }
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = os.environ['email_host_user']
+EMAIL_HOST_PASSWORD = os.environ['email_hose_password']
+EMAIL_PORT = os.environ['email_host_port']
+EMAIL_USE_TLS = True
 
 

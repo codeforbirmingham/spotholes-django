@@ -69,5 +69,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
         
         return reverse('account-detail', args = [self.username])
         
+    def get_reset_url(self, uib64, token):
+        
+        return reverse('confirm-reset', args = [uib64, token])
         
         

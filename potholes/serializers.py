@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from potholes.models import Pothole, Report
+from potholes.models import Pothole
 
 
 
@@ -12,11 +12,3 @@ class PotholeSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
         
-
-class ReportSerializer(serializers.ModelSerializer):
-    
-    
-    class Meta:
-        
-        model = Report
-        fields = '__all__'

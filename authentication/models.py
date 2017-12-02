@@ -43,8 +43,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    up_votes = GenericRelation(Action)
-    down_votes = GenericRelation(Action)
+    votes = GenericRelation(Action)
     score = models.IntegerField(default = 0, blank = True)
     
 

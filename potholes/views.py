@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from potholes.serializers import PotholeSerializer, ReportSerializer
-from potholes.models import Pothole, Report, Action
+from potholes.serializers import PotholeSerializer
+from potholes.models import Pothole
 from authentication.models import Account
 from rest_framework import status, permissions
 from potholes.permissions import IsModeratorOwnerOrReadOnly
@@ -131,98 +131,4 @@ class PotholeByUserListView(APIView):
         serializer = PotholeSerializer(objs, many = True)
         
         return Response(serializer.data, status = status.HTTP_200_OK)
-        
-
-
-
-class PotholeReportView(PaginationMixin, APIView):
-    
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-    
-    def get_objects(self, pk):
-        pothole = self.get_pothole(pk)
-        objs = Report.objects.filter(pothole = pothole)
-        return objs
-        
-    def get_pothole(self, pk):
-        try:
-           pothole = Pothole.objects.get(id = pk)
-        except Pothole.DoesNotExist:
-            raise Http404
-        
-        return pothole
-        
-    def get_report(self, pk):
-        
-        try:
-            obj = Report.objects.get(id = pk)
-        
-        except Report.DoesNotExist:
-            
-            raise Http404
-            
-        return obj
-        
-    def get(self, request, pk, format = None):
-        
-        objs = self.get_objects(pk)
-        
-        serializer = ReportSerializer(objs, many = True)
-        
-        return Response(serializer.data, status = status.HTTP_200_OK)
-        
-    
-    def post(self, request, pk, format = None):
-        pothole = self.get_pothole(pk)
-        
-        serializer = ReportSerializer(data = request.data)
-        if serializer.is_valid():
-            
-            serializer.save(user = request.user, pothole = pothole)
-            
-            report = self.get_report(serializer.data.get('id'))
-            
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
-            
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-        
-
-class PotholeReportDetailView(APIView):
-    
-    def get_object(self, r_pk):
-        try:
-            obj = Report.objects.get(id = r_pk)
-        except Report.DoesNotExist:
-            
-            raise Http404
-        return obj
-    
-    
-    def get(self, request, p_pk, r_pk, format = None):
-        
-        obj = self.get_object(r_pk)
-        serializer = ReportSerializer(obj)
-        
-        return Response(serializer.data, status = status.HTTP_200_OK)
-        
-    
-    def patch(self, request, p_pk, r_pk, format = None):
-        
-        obj = self.get_object(r_pk)
-        
-        serializer = ReportSerializer(obj, data = request.data, partial = True)
-        
-        if serializer.is_valid():
-            
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_202_ACCEPTED)
-            
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-              
-        
-        
-  
-        
-            
-            
         

@@ -31,8 +31,7 @@ class Pothole(models.Model):
     photo = models.ImageField(default = 'chain_rule.PNG', upload_to = 'potholes/')
     thumbnail = ImageSpecField(source = 'photo', processors = [ResizeToFill(300, 250)], format = 'JPEG', options={'quality': 60})
     status = models.CharField(default = 'uv', max_length = 10, choices = STATUS_CHOICES)
-    up_votes = GenericRelation(Action)
-    down_votes = GenericRelation(Action)
+    votes = GenericRelation(Action)
     created_at = models.DateTimeField(auto_now_add = True)
     
     def __unicode__(self):
@@ -44,26 +43,6 @@ class Pothole(models.Model):
         
         return reverse('pothole-detail', args = [self.id])
         
-
-class Report(models.Model):
-    
-    STATUS_CHOICES = (
-        ('un', 'unotified'),
-        ('ud', 'unresolved'),
-        ('rd', 'resolved'),
-    )
-    
-    user = models.ForeignKey('authentication.Account', blank = True)
-    pothole = models.ForeignKey('potholes.Pothole', blank = True)
-    status = models.CharField(default = 'ud', max_length = 2, choices = STATUS_CHOICES)
-    comment = models.TextField(max_length = 4000)
-    created = models.DateTimeField(auto_now_add = True)
-    resolved = models.DateTimeField(null = True, blank = True)
-    
-    
-    def __unicode__(self):
-        
-        return self.status
   
         
         

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from potholes.serializers import PotholeSerializer, ReportSerializer
+from potholes.serializers import PotholeSerializer
 from authentication.serializers import AccountSerializer
 from authentication.models import Account
 from potholes.models import Pothole

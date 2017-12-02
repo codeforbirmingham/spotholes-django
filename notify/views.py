@@ -44,7 +44,7 @@ class PotholeVoteView(APIView):
         
         pothole = self.get_object(pk)
         
-        data = {"up_votes": pothole.up_votes.count(), "down_votes": pothole.down_votes.count()}
+        data = {"up_votes": pothole.up_votes.filter(action = 'u').count(), "down_votes": pothole.down_votes.filter(action = 'd').count()}
         
         return Response(data, status = status.HTTP_200_OK)
         
@@ -91,7 +91,7 @@ class AccountVoteView(APIView):
         
         account = self.get_object(username)
         
-        data = {"up_votes": account.up_votes.count(), "down_votes": account.down_votes.count()}
+        data = {"up_votes": account.votes.filter(action = 'u').count(), "down_votes": account.votes.filter(action = 'd').count()}
         
         return Response(data, status = status.HTTP_200_OK)
         
@@ -100,9 +100,20 @@ class AccountVoteView(APIView):
         
         account = self.get_object(username)
         
-        request.data['content_object'] =account.get_absolute_url()
+        request.data['content_object'] = account.get_absolute_url()
         request.data['object_id'] = account.id
         request.data['recipient'] = account.id
         request.data['user'] = request.user.id
         request.data['content_type'] = ContentType.objects.get(model = 'account').id
+        
+        action_serializer = ActionSerializer(data = request.data)
+        
+        if action_serializer.is_valid():
+            
+            action_serializer.save()
+            
+            return Response({"message":"Vote recieved"}, status = status.HTTP_201_CREATED)
+            
+        
+        return Response(action_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
             

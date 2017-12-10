@@ -132,8 +132,6 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-AWS_ACCESS_KEY_ID = 'AKIAJLSNHHHMY2JKIE4Q'
-AWS_SECRET_ACCESS_KEY = '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'
 
 
 REST_FRAMEWORK = {

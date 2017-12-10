@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from potholes.views import ListPotholeView, PotholeDetailView, PotholeByUserListView, PotholeReportView, PotholeReportDetailView
+from potholes.views import ListPotholeView, PotholeDetailView, PotholeByUserListView
 from authentication.views import AccountListView, AccountDetailView, AccountStatusView, SignInView, PasswordResetRequestView, PasswordResetConfirmView
-from notify.views import NotificationListView, PotholeVoteView, AccountVoteView
+from notify.views import NotificationListView, PotholeVoteView, AccountVoteView, PotholeReportView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -29,11 +29,11 @@ urlpatterns = [
     url(r'api/v1/accounts/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', PasswordResetConfirmView.as_view(), name = 'confirm-reset'),
     url(r'^api/v1/accounts/(?P<username>\w+)/status/$', AccountStatusView.as_view(), name = 'account-status'),
     url(r'^api/v1/accounts/(?P<username>\w+)/potholes/$', PotholeByUserListView.as_view(), name = 'pothole-account-list'),
-    url(r'^api/v1/accounts/(?P<username>\w+)/vote/$', AccountVoteView.as_view(), name = 'account-detail'),
+    url(r'^api/v1/accounts/(?P<username>\w+)/vote/$', AccountVoteView.as_view(), name = 'account-vote'),
     url(r'^api/v1/potholes/$', ListPotholeView.as_view(), name = 'pothole-list'),
     url(r'^api/v1/potholes/(?P<pk>[0-9]+)/$', PotholeDetailView.as_view(), name = 'pothole-detail'),
     url(r'^api/v1/potholes/(?P<pk>[0-9]+)/vote/', PotholeVoteView.as_view(), name = 'pothole-vote'),
-    url(r'^api/v1/potholes/(?P<p_pk>[0-9]+)/reports/(?P<r_pk>[0-9]+)/$', PotholeReportDetailView.as_view(), name = 'report-detail'),
+    url(r'^api/v1/potholes/(?P<pk>[0-9]+)/report/', PotholeReportView.as_view(), name = 'pothole-report'),
     url(r'^api/v1/accounts/(?P<username>\w+)/notifications/$', NotificationListView.as_view(), name = 'notification-list')
     
 ]

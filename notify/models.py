@@ -23,7 +23,7 @@ class Action(models.Model):
     recipient = models.ForeignKey('authentication.Account', related_name = 'recieved')
     action = models.CharField(max_length = 1, choices = ACTIONS)
     comment = models.TextField(max_length = 2000, null = True, blank= True)
-    status = models.CharField(max_length = 2, null = True, blank = True)
+    status = models.CharField(max_length = 2, null = True, blank = True, default = 'ur')
     date_added = models.DateTimeField(auto_now_add = True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()

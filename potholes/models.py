@@ -4,7 +4,6 @@ from django.db import models
 from rest_framework.reverse import reverse
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import MaxValueValidator, MinValueValidator
-from potholes.validators import plus_one_minus_one_validator
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from authentication.models import Account
@@ -31,7 +30,7 @@ class Pothole(models.Model):
     photo = models.ImageField(default = 'chain_rule.PNG', upload_to = 'potholes/')
     thumbnail = ImageSpecField(source = 'photo', processors = [ResizeToFill(300, 250)], format = 'JPEG', options={'quality': 60})
     status = models.CharField(default = 'uv', max_length = 10, choices = STATUS_CHOICES)
-    votes = GenericRelation(Action)
+    actions = GenericRelation(Action)
     created_at = models.DateTimeField(auto_now_add = True)
     
     def __unicode__(self):

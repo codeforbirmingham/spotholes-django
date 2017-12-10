@@ -11,4 +11,3 @@ class PotholeSerializer(serializers.ModelSerializer):
         model = Pothole
         fields = '__all__'
         
-        

@@ -1,1 +1,0 @@
-def populate_accounts(number = 10)
